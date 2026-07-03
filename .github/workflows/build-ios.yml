@@ -15,16 +15,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-
-      - name: iOS iskeletini olustur (ios/ klasoru + pubspec)
-        run: flutter create --project-name bsltest --org com.example.bsltest --platforms=ios .
-
-      - name: Uygulama kodunu yerine koy
-        run: cp ci/main.dart lib/main.dart
-
-      - name: Yerel ag izni (iOS 14+ icin sart)
-        run: |
-          /usr/libexec/PlistBuddy -c "Add :NSLocalNetworkUsageDescription string 'Sunucuya baglanmak icin yerel ag erisimi'" ios/Runner/Info.plist || true
+          flutter-version: 3.44.4
 
       - name: Bagimliliklar
         run: flutter pub get
