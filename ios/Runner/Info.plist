@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Bsltest</string>
+	<string>Bslend</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>bsltest</string>
+	<string>bslend</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -53,12 +53,12 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Bu uygulama, bağlı olduğunuz Wi-Fi ağının adını doğrulamak için konum iznine ihtiyaç duyar.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Bu uygulama, bağlı olduğunuz Wi-Fi ağının adını doğrulamak için konum iznine ihtiyaç duyar.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Bu uygulama, yerel ağınızdaki bilgisayar (192.168.0.16) ile haberleşebilmek için yerel ağ erişim iznine ihtiyaç duyar.</string>
+	<string>Bu uygulama, yerel ağınızdaki cihazları bulup dosya aktarımı yapabilmek için yerel ağ erişim iznine ihtiyaç duyar.</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
