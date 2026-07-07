@@ -19,6 +19,8 @@ class DiscoveryService {
   RawDatagramSocket? _socket;
   Timer? _broadcastTimer;
   Timer? _sweepTimer;
+  Timer? _scanTimer;
+  bool _scanning = false;
 
   final Map<String, Peer> _peers = {};
   final _peersController = StreamController<List<Peer>>.broadcast();
@@ -32,6 +34,7 @@ class DiscoveryService {
   List<String> _myAddresses = [];
   int _broadcastCount = 0;
   int _receivedCount = 0;
+  int _scanCount = 0;
   String? _lastError;
 
   DiscoveryService({
@@ -60,6 +63,9 @@ class DiscoveryService {
       (_) => _broadcastAnnounce(),
     );
     _sweepTimer = Timer.periodic(kStalenessSweepInterval, (_) => _sweepStale());
+
+    _scanSubnets();
+    _scanTimer = Timer.periodic(kSubnetScanInterval, (_) => _scanSubnets());
   }
 
   Future<void> _refreshMyAddresses() async {
@@ -81,8 +87,8 @@ class DiscoveryService {
   void _emitStatus() {
     final addr = _myAddresses.isEmpty ? 'bilinmiyor' : _myAddresses.join(', ');
     _statusController.add(
-      'Benim IP: $addr | Yayin gonderildi: $_broadcastCount | '
-      'Alinan duyuru: $_receivedCount | Hata: ${_lastError ?? 'yok'}',
+      'Benim IP: $addr | Yayin: $_broadcastCount | Alinan duyuru: $_receivedCount | '
+      'Tarama: $_scanCount | Hata: ${_lastError ?? 'yok'}',
     );
   }
 
@@ -165,6 +171,82 @@ class DiscoveryService {
     _emitStatus();
   }
 
+  // UDP broadcast'in iletilmedigi aglar icin yedek kesif: kendi /24 alt
+  // agindaki her IP'ye kisa zaman asimiyla unicast HTTP istegi atip
+  // "/api/whoami" cevap veren cihazlari peer olarak ekler. Unicast trafik
+  // broadcast'ten farkli olarak bircok ISP/router konfigurasyonunda
+  // engellenmedigi icin bu, broadcast calismayan aglarda da kesfi saglar.
+  Future<void> _scanSubnets() async {
+    if (_scanning) return;
+    _scanning = true;
+    try {
+      await _refreshMyAddresses();
+
+      final prefixes = <String>{};
+      for (final address in _myAddresses) {
+        final parts = address.split('.');
+        if (parts.length == 4) {
+          prefixes.add('${parts[0]}.${parts[1]}.${parts[2]}');
+        }
+      }
+      if (prefixes.isEmpty) return;
+
+      final client = HttpClient()..connectionTimeout = kSubnetScanTimeout;
+      try {
+        for (final prefix in prefixes) {
+          final candidates = [
+            for (var i = 1; i <= 254; i++) '$prefix.$i',
+          ]..removeWhere(_myAddresses.contains);
+
+          for (var i = 0; i < candidates.length; i += kSubnetScanConcurrency) {
+            final end = (i + kSubnetScanConcurrency < candidates.length)
+                ? i + kSubnetScanConcurrency
+                : candidates.length;
+            await Future.wait(
+              candidates.sublist(i, end).map((ip) => _probe(client, ip)),
+            );
+          }
+        }
+      } finally {
+        client.close(force: true);
+      }
+
+      _scanCount++;
+      _emitStatus();
+    } finally {
+      _scanning = false;
+    }
+  }
+
+  Future<void> _probe(HttpClient client, String ip) async {
+    try {
+      final request = await client
+          .getUrl(Uri.http('$ip:$kTransferHttpPort', '/api/whoami'))
+          .timeout(kSubnetScanTimeout);
+      final response = await request.close().timeout(kSubnetScanTimeout);
+      final body =
+          await utf8.decodeStream(response).timeout(kSubnetScanTimeout);
+      final json = jsonDecode(body) as Map<String, dynamic>;
+
+      final String id = json['id'] as String;
+      if (id == myId) return;
+
+      debugPrint('[Discovery] Tarama ile bulundu: ${json['name']} ($ip).');
+
+      _peers[id] = Peer(
+        id: id,
+        displayName: json['name'] as String,
+        host: ip,
+        port: kTransferHttpPort,
+        platform: json['platform'] as String,
+        lastSeen: DateTime.now(),
+      );
+      _emit();
+    } catch (_) {
+      // Bu adreste cihaz yok ya da yanit vermedi, yok say.
+    }
+  }
+
   void _sweepStale() {
     final before = _peers.length;
     _peers.removeWhere((_, peer) => peer.isStale);
@@ -176,6 +258,7 @@ class DiscoveryService {
   Future<void> stop() async {
     _broadcastTimer?.cancel();
     _sweepTimer?.cancel();
+    _scanTimer?.cancel();
     _socket?.close();
     _socket = null;
     await _peersController.close();

@@ -13,6 +13,10 @@ import '../utils/constants.dart';
 //   POST /prepare           -> kullanıcıya kabul/red sorulur (Completer ile beklenir)
 //   POST /receive/<session> -> kabul edildiyse ham dosya baytları alınır
 class TransferServer {
+  final String myId;
+  final String myName;
+  final String myPlatform;
+
   HttpServer? _server;
 
   final Map<String, Completer<bool>> _pendingApprovals = {};
@@ -26,6 +30,12 @@ class TransferServer {
   // İlerleme/durum güncellemeleri (hem prepare-sonrası hem transfer sırasında).
   Stream<TransferTask> get transferUpdates => _updatesController.stream;
 
+  TransferServer({
+    required this.myId,
+    required this.myName,
+    required this.myPlatform,
+  });
+
   Future<void> start() async {
     _server = await HttpServer.bind(InternetAddress.anyIPv4, kTransferHttpPort);
     _server!.listen(_handleRequest);
@@ -33,7 +43,15 @@ class TransferServer {
 
   Future<void> _handleRequest(HttpRequest request) async {
     try {
-      if (request.method == 'POST' && request.uri.path == '/prepare') {
+      if (request.method == 'GET' && request.uri.path == '/api/whoami') {
+        request.response.headers.contentType = ContentType.json;
+        request.response.write(jsonEncode({
+          'id': myId,
+          'name': myName,
+          'platform': myPlatform,
+        }));
+        await request.response.close();
+      } else if (request.method == 'POST' && request.uri.path == '/prepare') {
         await _handlePrepare(request);
       } else if (request.method == 'POST' &&
           request.uri.path.startsWith('/receive/')) {

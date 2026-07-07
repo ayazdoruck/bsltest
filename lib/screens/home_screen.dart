@@ -44,15 +44,19 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       await _identity.load();
 
+      final transferServer = TransferServer(
+        myId: _identity.id,
+        myName: _identity.name,
+        myPlatform: _identity.platform,
+      );
+      await transferServer.start();
+
       final discovery = DiscoveryService(
         myId: _identity.id,
         myName: _identity.name,
         myPlatform: _identity.platform,
       );
       await discovery.start();
-
-      final transferServer = TransferServer();
-      await transferServer.start();
 
       final transferClient =
           TransferClient(myId: _identity.id, myName: _identity.name);
