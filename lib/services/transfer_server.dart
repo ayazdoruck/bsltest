@@ -20,6 +20,7 @@ class TransferServer {
   final SettingsService _settings = SettingsService();
 
   HttpServer? _server;
+  bool _stopped = false;
 
   final Map<String, Completer<bool>> _pendingApprovals = {};
   final Map<String, TransferTask> _tasks = {};
@@ -31,6 +32,18 @@ class TransferServer {
   Stream<TransferTask> get incomingRequests => _incomingController.stream;
   // İlerleme/durum güncellemeleri (hem prepare-sonrası hem transfer sırasında).
   Stream<TransferTask> get transferUpdates => _updatesController.stream;
+
+  // stop() cagirildiktan sonra hala devam eden bir istek buraya ulasabilir;
+  // kapatilmis bir stream'e ekleme yapmak uygulamayi cokertir.
+  void _addIncoming(TransferTask task) {
+    if (_stopped) return;
+    _incomingController.add(task);
+  }
+
+  void _addUpdate(TransferTask task) {
+    if (_stopped) return;
+    _updatesController.add(task);
+  }
 
   TransferServer({
     required this.myId,
@@ -101,7 +114,7 @@ class TransferServer {
 
     final completer = Completer<bool>();
     _pendingApprovals[sessionId] = completer;
-    _incomingController.add(task);
+    _addIncoming(task);
 
     final accepted = await completer.future.timeout(
       kTransferApprovalTimeout,
@@ -111,7 +124,7 @@ class TransferServer {
     _pendingApprovals.remove(sessionId);
     if (!accepted) {
       task.status = TransferStatus.rejected;
-      _updatesController.add(task);
+      _addUpdate(task);
       _tasks.remove(sessionId);
     }
 
@@ -137,7 +150,7 @@ class TransferServer {
     }
 
     task.status = TransferStatus.inProgress;
-    _updatesController.add(task);
+    _addUpdate(task);
 
     final saveDir = await _resolveSaveDirectory();
     final file = File('${saveDir.path}${Platform.pathSeparator}${task.fileName}');
@@ -147,11 +160,11 @@ class TransferServer {
       await for (final chunk in request) {
         sink.add(chunk);
         task.progressBytes += chunk.length;
-        _updatesController.add(task);
+        _addUpdate(task);
       }
       await sink.close();
       task.status = TransferStatus.completed;
-      _updatesController.add(task);
+      _addUpdate(task);
 
       request.response.headers.contentType = ContentType.json;
       request.response.write(jsonEncode({'ok': true}));
@@ -160,7 +173,7 @@ class TransferServer {
       await sink.close();
       task.status = TransferStatus.failed;
       task.errorMessage = '$e';
-      _updatesController.add(task);
+      _addUpdate(task);
 
       request.response.statusCode = HttpStatus.internalServerError;
       request.response.write(jsonEncode({'ok': false, 'error': '$e'}));
@@ -183,6 +196,7 @@ class TransferServer {
   }
 
   Future<void> stop() async {
+    _stopped = true;
     await _server?.close(force: true);
     _server = null;
     await _incomingController.close();

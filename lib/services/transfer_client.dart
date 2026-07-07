@@ -12,11 +12,19 @@ import '../models/transfer_task.dart';
 class TransferClient {
   final String myId;
   final String myName;
+  bool _disposed = false;
 
   final _updatesController = StreamController<TransferTask>.broadcast();
   Stream<TransferTask> get transferUpdates => _updatesController.stream;
 
   TransferClient({required this.myId, required this.myName});
+
+  // dispose() cagirildiktan sonra hala devam eden bir gonderim buraya
+  // ulasabilir; kapatilmis bir stream'e ekleme yapmak uygulamayi cokertir.
+  void _addUpdate(TransferTask task) {
+    if (_disposed) return;
+    _updatesController.add(task);
+  }
 
   Future<void> sendFile(Peer peer, File file) async {
     final fileName = file.uri.pathSegments.last;
@@ -31,27 +39,27 @@ class TransferClient {
       peer: peer,
       status: TransferStatus.awaitingApproval,
     );
-    _updatesController.add(task);
+    _addUpdate(task);
 
     final client = HttpClient();
     try {
       final accepted = await _prepare(client, peer, task);
       if (!accepted) {
         task.status = TransferStatus.rejected;
-        _updatesController.add(task);
+        _addUpdate(task);
         return;
       }
 
       task.status = TransferStatus.inProgress;
-      _updatesController.add(task);
+      _addUpdate(task);
       await _upload(client, peer, task, file);
 
       task.status = TransferStatus.completed;
-      _updatesController.add(task);
+      _addUpdate(task);
     } catch (e) {
       task.status = TransferStatus.failed;
       task.errorMessage = '$e';
-      _updatesController.add(task);
+      _addUpdate(task);
     } finally {
       client.close();
     }
@@ -92,7 +100,7 @@ class TransferClient {
     final progressStream = file.openRead().map((chunk) {
       sent += chunk.length;
       task.progressBytes = sent;
-      _updatesController.add(task);
+      _addUpdate(task);
       return chunk;
     });
     await request.addStream(progressStream);
@@ -100,6 +108,7 @@ class TransferClient {
   }
 
   void dispose() {
+    _disposed = true;
     _updatesController.close();
   }
 }

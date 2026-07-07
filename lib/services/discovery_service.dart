@@ -22,6 +22,7 @@ class DiscoveryService {
   Timer? _sweepTimer;
   Timer? _scanTimer;
   bool _scanning = false;
+  bool _stopped = false;
 
   final Map<String, Peer> _peers = {};
   final _peersController = StreamController<List<Peer>>.broadcast();
@@ -86,6 +87,11 @@ class DiscoveryService {
   }
 
   void _emitStatus() {
+    // stop() cagirildiktan sonra hala devam eden bir tarama/broadcast
+    // dongusu buraya ulasabilir; kapatilmis bir stream'e ekleme yapmak
+    // "Bad state: Cannot add event after closing" hatasiyla uygulamayi
+    // cokertir, bu yuzden erken cikiyoruz.
+    if (_stopped) return;
     _statusController.add(DiscoveryStatus(
       addresses: List.unmodifiable(_myAddresses),
       broadcastCount: _broadcastCount,
@@ -256,9 +262,13 @@ class DiscoveryService {
     if (_peers.length != before) _emit();
   }
 
-  void _emit() => _peersController.add(_peers.values.toList());
+  void _emit() {
+    if (_stopped) return;
+    _peersController.add(_peers.values.toList());
+  }
 
   Future<void> stop() async {
+    _stopped = true;
     _broadcastTimer?.cancel();
     _sweepTimer?.cancel();
     _scanTimer?.cancel();
