@@ -63,6 +63,7 @@ flutter_launcher_icons:
   remove_alpha_ios: true
   windows:
     generate: true
+    image_path: "assets/icon/bslend_icon_windows.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
