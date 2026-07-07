@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
+import '../models/discovery_status.dart';
 import '../models/peer.dart';
 import '../utils/constants.dart';
 
@@ -24,12 +25,12 @@ class DiscoveryService {
 
   final Map<String, Peer> _peers = {};
   final _peersController = StreamController<List<Peer>>.broadcast();
-  final _statusController = StreamController<String>.broadcast();
+  final _statusController = StreamController<DiscoveryStatus>.broadcast();
 
   Stream<List<Peer>> get peers => _peersController.stream;
   // Konsola erisimi olmayan (ör. IPA ile kurulmus) cihazlarda ekranda
-  // gosterilebilecek insan-okunur tanilama satiri.
-  Stream<String> get statusUpdates => _statusController.stream;
+  // gosterilebilecek ham tanilama verisi (UI tarafinda lokalize edilir).
+  Stream<DiscoveryStatus> get statusUpdates => _statusController.stream;
 
   List<String> _myAddresses = [];
   int _broadcastCount = 0;
@@ -85,11 +86,13 @@ class DiscoveryService {
   }
 
   void _emitStatus() {
-    final addr = _myAddresses.isEmpty ? 'bilinmiyor' : _myAddresses.join(', ');
-    _statusController.add(
-      'Benim IP: $addr | Yayin: $_broadcastCount | Alinan duyuru: $_receivedCount | '
-      'Tarama: $_scanCount | Hata: ${_lastError ?? 'yok'}',
-    );
+    _statusController.add(DiscoveryStatus(
+      addresses: List.unmodifiable(_myAddresses),
+      broadcastCount: _broadcastCount,
+      receivedCount: _receivedCount,
+      scanCount: _scanCount,
+      error: _lastError,
+    ));
   }
 
   void _onEvent(RawSocketEvent event) {

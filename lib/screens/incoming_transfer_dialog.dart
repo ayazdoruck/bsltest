@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/transfer_task.dart';
 import '../services/transfer_server.dart';
 import '../utils/constants.dart';
@@ -57,32 +58,34 @@ class _IncomingTransferDialogState extends State<_IncomingTransferDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
+
     return AlertDialog(
-      backgroundColor: const Color(0xFF1E2235),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text('Gelen Dosya'),
+      title: Text(t.incomingFileTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('${widget.task.peer.displayName} size bir dosya gönderiyor:'),
+          Text(t.incomingFileFrom(widget.task.peer.displayName)),
           const SizedBox(height: 12),
           Text(widget.task.fileName,
               style: const TextStyle(fontWeight: FontWeight.bold)),
           Text(formatBytes(widget.task.fileSize),
-              style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+              style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12)),
         ],
       ),
       actions: [
         TextButton(
           onPressed: () => _respond(false),
-          child: const Text('Reddet', style: TextStyle(color: Colors.redAccent)),
+          child: Text(t.reject, style: TextStyle(color: scheme.error)),
         ),
         TextButton(
           onPressed: () => _respond(true),
-          child: const Text('Kabul Et',
+          child: Text(t.accept,
               style: TextStyle(
-                  color: Color(0xFF10B981), fontWeight: FontWeight.bold)),
+                  color: scheme.secondary, fontWeight: FontWeight.bold)),
         ),
       ],
     );

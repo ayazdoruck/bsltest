@@ -1,0 +1,49 @@
+{
+  "@@locale": "ru",
+
+  "appTagline": "Находите устройства в той же локальной сети и быстро передавайте файлы.",
+  "getStarted": "Начать",
+
+  "tabReceive": "Получить",
+  "tabSend": "Отправить",
+  "tabSettings": "Настройки",
+
+  "servicesFailedToStart": "Не удалось запустить службы: {error}",
+
+  "myDevice": "Мое устройство",
+  "incomingFiles": "Входящие файлы",
+  "noIncomingFiles": "Пока нет входящих файлов.",
+
+  "nearbyDevices": "Устройства поблизости",
+  "searchingForDevices": "Поиск других устройств в той же сети...",
+  "outgoingTransfers": "Передачи",
+  "noTransfersYet": "Пока нет передач.",
+
+  "diagnosticsLine": "Мой IP: {ip} | Отправлено: {sent} | Получено: {received} | Сканирований: {scans} | Ошибка: {error}",
+  "noneError": "нет",
+
+  "deviceName": "Имя устройства",
+  "deviceNameHelp": "Другие устройства будут видеть вас под этим именем.",
+  "deviceNameUpdated": "Имя устройства обновлено.",
+
+  "saveLocation": "Место сохранения",
+  "chooseFolder": "Выбрать папку",
+  "resetToDefault": "Сбросить по умолчанию",
+  "defaultDownloads": "По умолчанию (Загрузки)",
+  "iosFixedLocationInfo": "Файлы хранятся внутри приложения (доступны через приложение «Файлы» в разделе Bslend).",
+
+  "language": "Язык",
+
+  "incomingFileTitle": "Входящий файл",
+  "incomingFileFrom": "{name} хочет отправить вам файл:",
+  "reject": "Отклонить",
+  "accept": "Принять",
+
+  "statusAwaitingApproval": "Ожидание подтверждения...",
+  "statusCompleted": "Завершено",
+  "statusRejected": "Отклонено",
+  "statusTimedOut": "Истекло время ожидания",
+  "statusFailed": "Ошибка: {error}",
+
+  "codedBy": "разработано "
+}

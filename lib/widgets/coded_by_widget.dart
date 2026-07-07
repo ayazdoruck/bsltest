@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../l10n/app_localizations.dart';
+
 // "coded by @ayazdoruck"
 class CodedByWidget extends StatefulWidget {
   final bool showCompact;
@@ -35,18 +37,23 @@ class _CodedByWidgetState extends State<CodedByWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
+
     return RichText(
       text: TextSpan(
         style: TextStyle(
-          color: widget.showCompact ? Colors.grey[400] : Colors.grey[500],
+          color: widget.showCompact
+              ? scheme.onSurfaceVariant.withValues(alpha: 0.8)
+              : scheme.onSurfaceVariant,
           fontSize: widget.showCompact ? 11 : 13,
         ),
         children: [
-          const TextSpan(text: 'coded by '),
+          TextSpan(text: t.codedBy),
           TextSpan(
             text: '@ayazdoruck',
-            style: const TextStyle(
-              color: Colors.purpleAccent,
+            style: TextStyle(
+              color: scheme.primary,
               fontWeight: FontWeight.bold,
               decoration: TextDecoration.underline,
             ),

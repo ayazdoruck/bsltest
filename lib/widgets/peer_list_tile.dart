@@ -11,10 +11,12 @@ class PeerListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isWindows = peer.platform == 'windows';
+    final scheme = Theme.of(context).colorScheme;
 
     return Card(
-      color: const Color(0xFF1E2235),
-      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+      elevation: 0,
+      color: scheme.surfaceContainerHigh,
+      margin: const EdgeInsets.symmetric(vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: ListTile(
         onTap: onTap,
@@ -22,18 +24,18 @@ class PeerListTile extends StatelessWidget {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
           radius: 22,
-          backgroundColor: const Color(0xFF6366F1).withValues(alpha: 0.18),
+          backgroundColor: scheme.primaryContainer,
           child: Icon(
             isWindows ? Icons.desktop_windows_rounded : Icons.phone_iphone_rounded,
-            color: const Color(0xFF6366F1),
+            color: scheme.onPrimaryContainer,
           ),
         ),
         title: Text(peer.displayName,
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.w600)),
+            style: TextStyle(
+                color: scheme.onSurface, fontWeight: FontWeight.w600)),
         subtitle: Text(peer.host,
-            style: TextStyle(color: Colors.grey[500], fontSize: 12)),
-        trailing: const Icon(Icons.send_rounded, color: Color(0xFF10B981)),
+            style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12)),
+        trailing: Icon(Icons.send_rounded, color: scheme.secondary),
       ),
     );
   }

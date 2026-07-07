@@ -1,0 +1,49 @@
+{
+  "@@locale": "zh",
+
+  "appTagline": "查找同一局域网内的附近设备，快速传输文件。",
+  "getStarted": "开始使用",
+
+  "tabReceive": "接收",
+  "tabSend": "发送",
+  "tabSettings": "设置",
+
+  "servicesFailedToStart": "服务启动失败：{error}",
+
+  "myDevice": "我的设备",
+  "incomingFiles": "接收的文件",
+  "noIncomingFiles": "暂无接收的文件。",
+
+  "nearbyDevices": "附近的设备",
+  "searchingForDevices": "正在搜索同一网络中的其他设备……",
+  "outgoingTransfers": "传输记录",
+  "noTransfersYet": "暂无传输记录。",
+
+  "diagnosticsLine": "我的 IP：{ip} | 已发送：{sent} | 已接收：{received} | 扫描次数：{scans} | 错误：{error}",
+  "noneError": "无",
+
+  "deviceName": "设备名称",
+  "deviceNameHelp": "其他设备将以此名称识别您。",
+  "deviceNameUpdated": "设备名称已更新。",
+
+  "saveLocation": "保存位置",
+  "chooseFolder": "选择文件夹",
+  "resetToDefault": "恢复默认",
+  "defaultDownloads": "默认（下载文件夹）",
+  "iosFixedLocationInfo": "文件保存在应用内部（可通过“文件”应用中的 Bslend 文件夹访问）。",
+
+  "language": "语言",
+
+  "incomingFileTitle": "收到文件",
+  "incomingFileFrom": "{name} 想要向您发送一个文件：",
+  "reject": "拒绝",
+  "accept": "接受",
+
+  "statusAwaitingApproval": "等待批准……",
+  "statusCompleted": "已完成",
+  "statusRejected": "已拒绝",
+  "statusTimedOut": "已超时",
+  "statusFailed": "错误：{error}",
+
+  "codedBy": "由 "
+}

@@ -1,0 +1,49 @@
+{
+  "@@locale": "tr",
+
+  "appTagline": "Aynı yerel ağ üzerindeki cihazları bulup aralarında hızlı dosya aktarımı yapın.",
+  "getStarted": "Başlayalım",
+
+  "tabReceive": "Al",
+  "tabSend": "Gönder",
+  "tabSettings": "Ayarlar",
+
+  "servicesFailedToStart": "Servisler başlatılamadı: {error}",
+
+  "myDevice": "Cihazım",
+  "incomingFiles": "Gelen Dosyalar",
+  "noIncomingFiles": "Henüz gelen dosya yok.",
+
+  "nearbyDevices": "Yakındaki Cihazlar",
+  "searchingForDevices": "Aynı ağ üzerinde başka bir cihaz aranıyor...",
+  "outgoingTransfers": "Transferler",
+  "noTransfersYet": "Henüz bir transfer yok.",
+
+  "diagnosticsLine": "Benim IP: {ip} | Gönderilen: {sent} | Alınan: {received} | Tarama: {scans} | Hata: {error}",
+  "noneError": "yok",
+
+  "deviceName": "Cihaz Adı",
+  "deviceNameHelp": "Diğer cihazlarda seni bu adla görürler.",
+  "deviceNameUpdated": "Cihaz adı güncellendi.",
+
+  "saveLocation": "Dosya Kayıt Konumu",
+  "chooseFolder": "Klasör Seç",
+  "resetToDefault": "Varsayılana Dön",
+  "defaultDownloads": "Varsayılan (İndirilenler)",
+  "iosFixedLocationInfo": "Dosyalar uygulama içinde saklanır (Dosyalar uygulamasından Bslend altında erişilebilir).",
+
+  "language": "Dil",
+
+  "incomingFileTitle": "Gelen Dosya",
+  "incomingFileFrom": "{name} size bir dosya gönderiyor:",
+  "reject": "Reddet",
+  "accept": "Kabul Et",
+
+  "statusAwaitingApproval": "Onay bekleniyor...",
+  "statusCompleted": "Tamamlandı",
+  "statusRejected": "Reddedildi",
+  "statusTimedOut": "Zaman aşımı",
+  "statusFailed": "Hata: {error}",
+
+  "codedBy": "coded by "
+}
