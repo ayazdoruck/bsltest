@@ -129,26 +129,34 @@ class DiscoveryService {
       'type': 'announce',
     }));
 
-    // Evrensel broadcast bazi router/adaptor kombinasyonlarinda iletilmeyebilir;
-    // bu yuzden ek olarak her aktif arayuzun kendi alt ag broadcast adresine
-    // (varsayilan /24) de gonderiyoruz.
-    final targets = <String>{'255.255.255.255'};
-    for (final address in _myAddresses) {
-      final parts = address.split('.');
-      if (parts.length == 4) {
-        targets.add('${parts[0]}.${parts[1]}.${parts[2]}.255');
-      }
-    }
-
+    // Birden fazla aktif ag karti varsa (ör. Ethernet + Wi-Fi ayni anda),
+    // tek bir anyIPv4 soketten gonderim yapmak isletim sistemine hangi
+    // kartin secilecegini birakiyor (genelde daha dusuk metrikli kablolu
+    // baglanti kazaniyor). Bunun onune gecmek icin her yerel adrese ayri,
+    // o adrese baglanmis bir gonderim soketi acip paketi o karttan
+    // gondermeye zorluyoruz.
     var anySucceeded = false;
     String? error;
-    for (final target in targets) {
+
+    for (final address in _myAddresses) {
+      final parts = address.split('.');
+      if (parts.length != 4) continue;
+      final directedBroadcast = '${parts[0]}.${parts[1]}.${parts[2]}.255';
+
+      RawDatagramSocket? sender;
       try {
-        _socket?.send(payload, InternetAddress(target), kDiscoveryUdpPort);
+        sender = await RawDatagramSocket.bind(InternetAddress(address), 0);
+        sender.broadcastEnabled = true;
+        sender.send(
+            payload, InternetAddress(directedBroadcast), kDiscoveryUdpPort);
+        sender.send(
+            payload, InternetAddress('255.255.255.255'), kDiscoveryUdpPort);
         anySucceeded = true;
       } catch (e) {
-        error = '$target: $e';
-        debugPrint('[Discovery] $target adresine gonderilemedi: $e');
+        error = '$address: $e';
+        debugPrint('[Discovery] $address uzerinden gonderilemedi: $e');
+      } finally {
+        sender?.close();
       }
     }
 
