@@ -123,4 +123,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get codedBy => '由 ';
+
+  @override
+  String sendToPeer(String name) {
+    return '发送给 $name';
+  }
+
+  @override
+  String get pickFile => '选择文件';
+
+  @override
+  String get pickFromGallery => '从相册选择';
+
+  @override
+  String get takePhoto => '拍照';
 }

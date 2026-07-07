@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/discovery_status.dart';
@@ -13,6 +14,7 @@ import '../services/transfer_client.dart';
 import '../services/transfer_server.dart';
 import '../widgets/coded_by_widget.dart';
 import 'incoming_transfer_dialog.dart';
+import 'send_options_sheet.dart';
 import 'tabs/receive_tab.dart';
 import 'tabs/send_tab.dart';
 import 'tabs/settings_tab.dart';
@@ -125,6 +127,31 @@ class _HomeShellState extends State<HomeShell> {
   }
 
   Future<void> _pickAndSend(Peer peer) async {
+    // Windows'ta galeri/kamera kavrami olmadigi icin dogrudan dosya secici
+    // acilir; iOS'ta LocalSend'deki gibi Dosya/Galeri/Kamera secenekleri
+    // sunulur.
+    if (Platform.isWindows) {
+      await _pickFilesAndSend(peer);
+      return;
+    }
+
+    final source = await showSendOptionsSheet(context, peer);
+    if (source == null) return;
+
+    switch (source) {
+      case SendSource.files:
+        await _pickFilesAndSend(peer);
+        break;
+      case SendSource.gallery:
+        await _pickGalleryAndSend(peer);
+        break;
+      case SendSource.camera:
+        await _pickCameraAndSend(peer);
+        break;
+    }
+  }
+
+  Future<void> _pickFilesAndSend(Peer peer) async {
     final result = await FilePicker.platform.pickFiles(allowMultiple: true);
     if (result == null) return;
 
@@ -132,6 +159,19 @@ class _HomeShellState extends State<HomeShell> {
       if (picked.path == null) continue;
       await _transferClient!.sendFile(peer, File(picked.path!));
     }
+  }
+
+  Future<void> _pickGalleryAndSend(Peer peer) async {
+    final picked = await ImagePicker().pickMultipleMedia();
+    for (final xfile in picked) {
+      await _transferClient!.sendFile(peer, File(xfile.path));
+    }
+  }
+
+  Future<void> _pickCameraAndSend(Peer peer) async {
+    final photo = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (photo == null) return;
+    await _transferClient!.sendFile(peer, File(photo.path));
   }
 
   @override

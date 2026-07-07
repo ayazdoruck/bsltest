@@ -126,4 +126,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get codedBy => 'разработано ';
+
+  @override
+  String sendToPeer(String name) {
+    return 'Отправить на $name';
+  }
+
+  @override
+  String get pickFile => 'Выбрать файл';
+
+  @override
+  String get pickFromGallery => 'Выбрать из галереи';
+
+  @override
+  String get takePhoto => 'Сделать фото';
 }

@@ -45,5 +45,10 @@
   "statusTimedOut": "Zaman aşımı",
   "statusFailed": "Hata: {error}",
 
-  "codedBy": "coded by "
+  "codedBy": "coded by ",
+
+  "sendToPeer": "{name} adlı cihaza gönder",
+  "pickFile": "Dosya Seç",
+  "pickFromGallery": "Galeriden Seç",
+  "takePhoto": "Kamerayla Çek"
 }

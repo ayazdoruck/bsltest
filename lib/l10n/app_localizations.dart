@@ -311,6 +311,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'coded by '**
   String get codedBy;
+
+  /// No description provided for @sendToPeer.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to {name}'**
+  String sendToPeer(String name);
+
+  /// No description provided for @pickFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose File'**
+  String get pickFile;
+
+  /// No description provided for @pickFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get pickFromGallery;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo'**
+  String get takePhoto;
 }
 
 class _AppLocalizationsDelegate

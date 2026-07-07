@@ -120,5 +120,21 @@
     }
   },
 
-  "codedBy": "coded by "
+  "codedBy": "coded by ",
+
+  "sendToPeer": "Send to {name}",
+  "@sendToPeer": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+
+  "pickFile": "Choose File",
+  "@pickFile": {},
+
+  "pickFromGallery": "Choose from Gallery",
+  "@pickFromGallery": {},
+
+  "takePhoto": "Take Photo",
+  "@takePhoto": {}
 }

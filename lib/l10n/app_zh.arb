@@ -45,5 +45,10 @@
   "statusTimedOut": "已超时",
   "statusFailed": "错误：{error}",
 
-  "codedBy": "由 "
+  "codedBy": "由 ",
+
+  "sendToPeer": "发送给 {name}",
+  "pickFile": "选择文件",
+  "pickFromGallery": "从相册选择",
+  "takePhoto": "拍照"
 }

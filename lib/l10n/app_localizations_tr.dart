@@ -126,4 +126,18 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get codedBy => 'coded by ';
+
+  @override
+  String sendToPeer(String name) {
+    return '$name adlı cihaza gönder';
+  }
+
+  @override
+  String get pickFile => 'Dosya Seç';
+
+  @override
+  String get pickFromGallery => 'Galeriden Seç';
+
+  @override
+  String get takePhoto => 'Kamerayla Çek';
 }

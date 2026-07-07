@@ -59,6 +59,10 @@
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Çektiğiniz bir fotoğrafı doğrudan gönderebilmeniz için kameraya erişim iznine ihtiyaç duyar.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Galerinizden fotoğraf/video seçip gönderebilmeniz için fotoğraf kitaplığı erişim iznine ihtiyaç duyar.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

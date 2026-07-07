@@ -126,4 +126,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get codedBy => 'coded by ';
+
+  @override
+  String sendToPeer(String name) {
+    return 'Send to $name';
+  }
+
+  @override
+  String get pickFile => 'Choose File';
+
+  @override
+  String get pickFromGallery => 'Choose from Gallery';
+
+  @override
+  String get takePhoto => 'Take Photo';
 }

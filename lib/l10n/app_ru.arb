@@ -45,5 +45,10 @@
   "statusTimedOut": "Истекло время ожидания",
   "statusFailed": "Ошибка: {error}",
 
-  "codedBy": "разработано "
+  "codedBy": "разработано ",
+
+  "sendToPeer": "Отправить на {name}",
+  "pickFile": "Выбрать файл",
+  "pickFromGallery": "Выбрать из галереи",
+  "takePhoto": "Сделать фото"
 }
