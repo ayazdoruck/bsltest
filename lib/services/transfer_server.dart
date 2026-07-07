@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import '../models/peer.dart';
 import '../models/transfer_task.dart';
 import '../utils/constants.dart';
+import 'settings_service.dart';
 
 // Gelen dosya transferlerini kabul eden HTTP sunucusu.
 // İki aşamalı akış:
@@ -16,6 +17,7 @@ class TransferServer {
   final String myId;
   final String myName;
   final String myPlatform;
+  final SettingsService _settings = SettingsService();
 
   HttpServer? _server;
 
@@ -170,6 +172,10 @@ class TransferServer {
 
   Future<Directory> _resolveSaveDirectory() async {
     if (Platform.isWindows) {
+      final customPath = await _settings.getSaveDirectory();
+      if (customPath != null && await Directory(customPath).exists()) {
+        return Directory(customPath);
+      }
       final downloads = await getDownloadsDirectory();
       if (downloads != null) return downloads;
     }

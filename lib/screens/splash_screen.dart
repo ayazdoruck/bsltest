@@ -25,10 +25,10 @@ class SplashScreen extends StatelessWidget {
               children: [
                 const Spacer(flex: 2),
                 Container(
-                  padding: const EdgeInsets.all(28),
+                  width: 136,
+                  height: 136,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF6366F1).withValues(alpha: 0.12),
                     border: Border.all(
                       color: const Color(0xFF6366F1).withValues(alpha: 0.35),
                       width: 2,
@@ -41,10 +41,11 @@ class SplashScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.send_to_mobile_rounded,
-                    size: 80,
-                    color: Color(0xFF6366F1),
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/icon/bslend_icon.png',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 36),

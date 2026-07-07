@@ -32,4 +32,12 @@ class DeviceIdentityService {
       await prefs.setString(_nameKey, _name!);
     }
   }
+
+  Future<void> setName(String newName) async {
+    final trimmed = newName.trim();
+    if (trimmed.isEmpty) return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_nameKey, trimmed);
+    _name = trimmed;
+  }
 }

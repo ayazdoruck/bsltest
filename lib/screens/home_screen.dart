@@ -13,6 +13,7 @@ import '../widgets/coded_by_widget.dart';
 import '../widgets/peer_list_tile.dart';
 import '../widgets/transfer_progress_tile.dart';
 import 'incoming_transfer_dialog.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -101,6 +102,30 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  Future<void> _restartServices() async {
+    await _discovery?.stop();
+    await _transferServer?.stop();
+    _transferClient?.dispose();
+    setState(() {
+      _discovery = null;
+      _transferServer = null;
+      _transferClient = null;
+      _peers = [];
+      _tasks.clear();
+      _discoveryStatus = '';
+      _starting = true;
+      _startError = null;
+    });
+    await _startServices();
+  }
+
+  Future<void> _openSettings() async {
+    final changed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => SettingsScreen(identity: _identity)),
+    );
+    if (changed == true) await _restartServices();
+  }
+
   Future<void> _pickAndSend(Peer peer) async {
     final result = await FilePicker.platform.pickFiles(allowMultiple: true);
     if (result == null) return;
@@ -126,6 +151,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         backgroundColor: const Color(0xFF151829),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_rounded),
+            tooltip: 'Ayarlar',
+            onPressed: _openSettings,
+          ),
+        ],
       ),
       body: _starting
           ? const Center(child: CircularProgressIndicator())
