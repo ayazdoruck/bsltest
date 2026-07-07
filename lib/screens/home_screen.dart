@@ -29,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Peer> _peers = [];
   final Map<String, TransferTask> _tasks = {};
+  String _discoveryStatus = '';
 
   bool _starting = true;
   String? _startError;
@@ -58,6 +59,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       discovery.peers.listen((peers) {
         if (mounted) setState(() => _peers = peers);
+      });
+      discovery.statusUpdates.listen((status) {
+        if (mounted) setState(() => _discoveryStatus = status);
       });
       transferServer.incomingRequests.listen((task) {
         if (!mounted) return;
@@ -132,6 +136,15 @@ class _HomeScreenState extends State<HomeScreen> {
               : Column(
                   children: [
                     _sectionHeader('Yakındaki Cihazlar'),
+                    if (_discoveryStatus.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                        child: Text(
+                          _discoveryStatus,
+                          style: TextStyle(
+                              color: Colors.grey[600], fontSize: 10),
+                        ),
+                      ),
                     _peers.isEmpty
                         ? _emptyHint(
                             'Aynı ağ üzerinde başka bir cihaz aranıyor...')
