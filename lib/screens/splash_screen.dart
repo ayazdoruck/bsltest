@@ -1,12 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../l10n/app_localizations.dart';
+import '../services/device_identity_service.dart';
+import '../services/discovery_service.dart';
+import '../services/transfer_client.dart';
+import '../services/transfer_server.dart';
 import '../widgets/coded_by_widget.dart';
 import 'home_shell.dart';
 
-// GİRİŞ / SPLASH EKRANI (ağ durumu ne olursa olsun açılışta görünür)
-class SplashScreen extends StatelessWidget {
+// GİRİŞ / SPLASH EKRANI. Kullanıcıdan tıklama beklemez: kimlik/keşif/
+// transfer servislerini burada başlatıp hazır olduklarında otomatik olarak
+// HomeShell'e geçer (pushReplacement ile - geri gidilecek bir splash rotası
+// kalmaz, HomeShell'in AppBar'ında da bu yuzden geri oku çıkmaz).
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _prepare();
+  }
+
+  void _retry() {
+    setState(() => _error = null);
+    _prepare();
+  }
+
+  Future<void> _prepare() async {
+    try {
+      final identity = DeviceIdentityService();
+      await identity.load();
+
+      final transferServer = TransferServer(
+        myId: identity.id,
+        myName: identity.name,
+        myPlatform: identity.platform,
+      );
+      await transferServer.start();
+
+      final discovery = DiscoveryService(
+        myId: identity.id,
+        myName: identity.name,
+        myPlatform: identity.platform,
+      );
+      await discovery.start();
+
+      final transferClient =
+          TransferClient(myId: identity.id, myName: identity.name);
+
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => HomeShell(
+            identity: identity,
+            discovery: discovery,
+            transferServer: transferServer,
+            transferClient: transferClient,
+          ),
+        ),
+      );
+    } catch (e) {
+      if (mounted) setState(() => _error = '$e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,33 +143,37 @@ class SplashScreen extends StatelessWidget {
                 const Spacer(flex: 3),
                 _AnimatedEntrance(
                   delay: const Duration(milliseconds: 320),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 58,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const HomeShell()),
-                        );
-                      },
-                      icon: const Icon(Icons.rocket_launch_rounded),
-                      label: Text(
-                        t.getStarted,
-                        style: const TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.bold),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: scheme.primary,
-                        foregroundColor: scheme.onPrimary,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                  child: _error == null
+                      ? Column(
+                          children: [
+                            SpinKitPulse(color: scheme.primary, size: 46),
+                            const SizedBox(height: 18),
+                            Text(
+                              t.preparingServer,
+                              style: TextStyle(
+                                  color: scheme.onSurfaceVariant, fontSize: 14),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            Icon(Icons.error_outline_rounded,
+                                color: scheme.error, size: 36),
+                            const SizedBox(height: 12),
+                            Text(
+                              t.servicesFailedToStart(_error!),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: scheme.error, fontSize: 13),
+                            ),
+                            const SizedBox(height: 16),
+                            OutlinedButton(
+                              onPressed: _retry,
+                              child: Text(t.retry),
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                  ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 40),
                 const CodedByWidget(),
                 const SizedBox(height: 12),
               ],

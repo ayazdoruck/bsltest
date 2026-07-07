@@ -13,9 +13,6 @@ class AppLocalizationsTr extends AppLocalizations {
       'Aynı yerel ağ üzerindeki cihazları bulup aralarında hızlı dosya aktarımı yapın.';
 
   @override
-  String get getStarted => 'Başlayalım';
-
-  @override
   String get tabReceive => 'Al';
 
   @override
@@ -140,4 +137,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get takePhoto => 'Kamerayla Çek';
+
+  @override
+  String get preparingServer => 'Sunucunuz hazırlanıyor...';
+
+  @override
+  String get retry => 'Tekrar Dene';
 }

@@ -108,12 +108,6 @@ abstract class AppLocalizations {
   /// **'Find nearby devices on the same local network and transfer files fast.'**
   String get appTagline;
 
-  /// No description provided for @getStarted.
-  ///
-  /// In en, this message translates to:
-  /// **'Get Started'**
-  String get getStarted;
-
   /// No description provided for @tabReceive.
   ///
   /// In en, this message translates to:
@@ -335,6 +329,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Take Photo'**
   String get takePhoto;
+
+  /// No description provided for @preparingServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing your server...'**
+  String get preparingServer;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
 }
 
 class _AppLocalizationsDelegate

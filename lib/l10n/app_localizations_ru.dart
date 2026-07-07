@@ -13,9 +13,6 @@ class AppLocalizationsRu extends AppLocalizations {
       'Находите устройства в той же локальной сети и быстро передавайте файлы.';
 
   @override
-  String get getStarted => 'Начать';
-
-  @override
   String get tabReceive => 'Получить';
 
   @override
@@ -140,4 +137,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get takePhoto => 'Сделать фото';
+
+  @override
+  String get preparingServer => 'Подготовка вашего сервера...';
+
+  @override
+  String get retry => 'Повторить';
 }

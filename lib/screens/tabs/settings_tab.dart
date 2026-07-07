@@ -7,6 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../../services/device_identity_service.dart';
 import '../../services/locale_service.dart';
 import '../../services/settings_service.dart';
+import '../../widgets/coded_by_widget.dart';
 
 class SettingsTab extends StatefulWidget {
   final DeviceIdentityService identity;
@@ -196,6 +197,8 @@ class _SettingsTabState extends State<SettingsTab> {
             );
           }).toList(),
         ),
+        const SizedBox(height: 48),
+        const Center(child: CodedByWidget()),
       ],
     );
   }

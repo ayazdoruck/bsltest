@@ -4,9 +4,6 @@
   "appTagline": "Find nearby devices on the same local network and transfer files fast.",
   "@appTagline": {},
 
-  "getStarted": "Get Started",
-  "@getStarted": {},
-
   "tabReceive": "Receive",
   "@tabReceive": {},
 
@@ -136,5 +133,11 @@
   "@pickFromGallery": {},
 
   "takePhoto": "Take Photo",
-  "@takePhoto": {}
+  "@takePhoto": {},
+
+  "preparingServer": "Preparing your server...",
+  "@preparingServer": {},
+
+  "retry": "Retry",
+  "@retry": {}
 }

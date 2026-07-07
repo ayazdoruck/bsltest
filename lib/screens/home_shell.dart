@@ -12,7 +12,6 @@ import '../services/device_identity_service.dart';
 import '../services/discovery_service.dart';
 import '../services/transfer_client.dart';
 import '../services/transfer_server.dart';
-import '../widgets/coded_by_widget.dart';
 import 'incoming_transfer_dialog.dart';
 import 'send_options_sheet.dart';
 import 'tabs/receive_tab.dart';
@@ -21,109 +20,110 @@ import 'tabs/settings_tab.dart';
 
 enum HomeTab { receive, send, settings }
 
+// Servisler artik burada degil, SplashScreen'de baslatiliyor (yukleme
+// animasyonu sirasinda) ve hazir halde bu widget'a aktariliyor - boylece
+// HomeShell'in kendi "yukleniyor" ekranina ya da geri gidilebilecek bir
+// splash rotasina ihtiyaci kalmiyor.
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  final DeviceIdentityService identity;
+  final DiscoveryService discovery;
+  final TransferServer transferServer;
+  final TransferClient transferClient;
+
+  const HomeShell({
+    super.key,
+    required this.identity,
+    required this.discovery,
+    required this.transferServer,
+    required this.transferClient,
+  });
 
   @override
   State<HomeShell> createState() => _HomeShellState();
 }
 
 class _HomeShellState extends State<HomeShell> {
-  final DeviceIdentityService _identity = DeviceIdentityService();
-  DiscoveryService? _discovery;
-  TransferServer? _transferServer;
-  TransferClient? _transferClient;
+  late DiscoveryService _discovery;
+  late TransferServer _transferServer;
+  late TransferClient _transferClient;
 
   List<Peer> _peers = [];
   final Map<String, TransferTask> _tasks = {};
   DiscoveryStatus? _discoveryStatus;
-
-  bool _starting = true;
-  String? _startError;
   HomeTab _currentTab = HomeTab.send;
 
   @override
   void initState() {
     super.initState();
-    _startServices();
+    _discovery = widget.discovery;
+    _transferServer = widget.transferServer;
+    _transferClient = widget.transferClient;
+    _wireListeners();
   }
 
-  Future<void> _startServices() async {
-    try {
-      await _identity.load();
-
-      final transferServer = TransferServer(
-        myId: _identity.id,
-        myName: _identity.name,
-        myPlatform: _identity.platform,
-      );
-      await transferServer.start();
-
-      final discovery = DiscoveryService(
-        myId: _identity.id,
-        myName: _identity.name,
-        myPlatform: _identity.platform,
-      );
-      await discovery.start();
-
-      final transferClient =
-          TransferClient(myId: _identity.id, myName: _identity.name);
-
-      discovery.peers.listen((peers) {
-        if (mounted) setState(() => _peers = peers);
-      });
-      discovery.statusUpdates.listen((status) {
-        if (mounted) setState(() => _discoveryStatus = status);
-      });
-      transferServer.incomingRequests.listen((task) {
-        if (!mounted) return;
-        setState(() => _tasks[task.id] = task);
-        showIncomingTransferDialog(context, task, transferServer);
-      });
-      transferServer.transferUpdates.listen((task) {
-        if (mounted) setState(() => _tasks[task.id] = task);
-      });
-      transferClient.transferUpdates.listen((task) {
-        if (mounted) setState(() => _tasks[task.id] = task);
-      });
-
-      setState(() {
-        _discovery = discovery;
-        _transferServer = transferServer;
-        _transferClient = transferClient;
-        _starting = false;
-      });
-    } catch (e) {
-      setState(() {
-        _startError = '$e';
-        _starting = false;
-      });
-    }
+  void _wireListeners() {
+    _discovery.peers.listen((peers) {
+      if (mounted) setState(() => _peers = peers);
+    });
+    _discovery.statusUpdates.listen((status) {
+      if (mounted) setState(() => _discoveryStatus = status);
+    });
+    _transferServer.incomingRequests.listen((task) {
+      if (!mounted) return;
+      setState(() => _tasks[task.id] = task);
+      showIncomingTransferDialog(context, task, _transferServer);
+    });
+    _transferServer.transferUpdates.listen((task) {
+      if (mounted) setState(() => _tasks[task.id] = task);
+    });
+    _transferClient.transferUpdates.listen((task) {
+      if (mounted) setState(() => _tasks[task.id] = task);
+    });
   }
 
   @override
   void dispose() {
-    _discovery?.stop();
-    _transferServer?.stop();
-    _transferClient?.dispose();
+    _discovery.stop();
+    _transferServer.stop();
+    _transferClient.dispose();
     super.dispose();
   }
 
+  // Ayarlar'dan cihaz adi degistirildiginde cagirilir: eski servisleri
+  // durdurup yeni isimle yeniden baslatir.
   Future<void> _restartServices() async {
-    await _discovery?.stop();
-    await _transferServer?.stop();
-    _transferClient?.dispose();
+    await _discovery.stop();
+    await _transferServer.stop();
+    _transferClient.dispose();
+
+    final identity = widget.identity;
+    final transferServer = TransferServer(
+      myId: identity.id,
+      myName: identity.name,
+      myPlatform: identity.platform,
+    );
+    await transferServer.start();
+
+    final discovery = DiscoveryService(
+      myId: identity.id,
+      myName: identity.name,
+      myPlatform: identity.platform,
+    );
+    await discovery.start();
+
+    final transferClient =
+        TransferClient(myId: identity.id, myName: identity.name);
+
+    if (!mounted) return;
     setState(() {
-      _discovery = null;
-      _transferServer = null;
-      _transferClient = null;
+      _discovery = discovery;
+      _transferServer = transferServer;
+      _transferClient = transferClient;
       _peers = [];
       _tasks.clear();
       _discoveryStatus = null;
-      _starting = true;
-      _startError = null;
     });
-    await _startServices();
+    _wireListeners();
   }
 
   Future<void> _pickAndSend(Peer peer) async {
@@ -157,44 +157,26 @@ class _HomeShellState extends State<HomeShell> {
 
     for (final picked in result.files) {
       if (picked.path == null) continue;
-      await _transferClient!.sendFile(peer, File(picked.path!));
+      await _transferClient.sendFile(peer, File(picked.path!));
     }
   }
 
   Future<void> _pickGalleryAndSend(Peer peer) async {
     final picked = await ImagePicker().pickMultipleMedia();
     for (final xfile in picked) {
-      await _transferClient!.sendFile(peer, File(xfile.path));
+      await _transferClient.sendFile(peer, File(xfile.path));
     }
   }
 
   Future<void> _pickCameraAndSend(Peer peer) async {
     final photo = await ImagePicker().pickImage(source: ImageSource.camera);
     if (photo == null) return;
-    await _transferClient!.sendFile(peer, File(photo.path));
+    await _transferClient.sendFile(peer, File(photo.path));
   }
 
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
-
-    if (_starting) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-    if (_startError != null) {
-      return Scaffold(
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Text(
-              t.servicesFailedToStart(_startError!),
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      );
-    }
 
     final allTasks = _tasks.values.toList().reversed.toList();
     final incoming =
@@ -210,7 +192,7 @@ class _HomeShellState extends State<HomeShell> {
 
     final pages = [
       ReceiveTab(
-        identity: _identity,
+        identity: widget.identity,
         discoveryStatus: _discoveryStatus,
         incomingTasks: incoming,
       ),
@@ -221,7 +203,7 @@ class _HomeShellState extends State<HomeShell> {
         onPeerTap: _pickAndSend,
       ),
       SettingsTab(
-        identity: _identity,
+        identity: widget.identity,
         onIdentityChanged: _restartServices,
       ),
     ];
@@ -231,14 +213,9 @@ class _HomeShellState extends State<HomeShell> {
 
       return Scaffold(
         appBar: AppBar(
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Bslend',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const CodedByWidget(showCompact: true),
-            ],
-          ),
+          automaticallyImplyLeading: false,
+          title: const Text('Bslend',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
         body: Row(
           children: [

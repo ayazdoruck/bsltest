@@ -2,8 +2,6 @@
   "@@locale": "ru",
 
   "appTagline": "Находите устройства в той же локальной сети и быстро передавайте файлы.",
-  "getStarted": "Начать",
-
   "tabReceive": "Получить",
   "tabSend": "Отправить",
   "tabSettings": "Настройки",
@@ -50,5 +48,8 @@
   "sendToPeer": "Отправить на {name}",
   "pickFile": "Выбрать файл",
   "pickFromGallery": "Выбрать из галереи",
-  "takePhoto": "Сделать фото"
+  "takePhoto": "Сделать фото",
+
+  "preparingServer": "Подготовка вашего сервера...",
+  "retry": "Повторить"
 }

@@ -2,8 +2,6 @@
   "@@locale": "tr",
 
   "appTagline": "Aynı yerel ağ üzerindeki cihazları bulup aralarında hızlı dosya aktarımı yapın.",
-  "getStarted": "Başlayalım",
-
   "tabReceive": "Al",
   "tabSend": "Gönder",
   "tabSettings": "Ayarlar",
@@ -50,5 +48,8 @@
   "sendToPeer": "{name} adlı cihaza gönder",
   "pickFile": "Dosya Seç",
   "pickFromGallery": "Galeriden Seç",
-  "takePhoto": "Kamerayla Çek"
+  "takePhoto": "Kamerayla Çek",
+
+  "preparingServer": "Sunucunuz hazırlanıyor...",
+  "retry": "Tekrar Dene"
 }

@@ -2,8 +2,6 @@
   "@@locale": "zh",
 
   "appTagline": "查找同一局域网内的附近设备，快速传输文件。",
-  "getStarted": "开始使用",
-
   "tabReceive": "接收",
   "tabSend": "发送",
   "tabSettings": "设置",
@@ -50,5 +48,8 @@
   "sendToPeer": "发送给 {name}",
   "pickFile": "选择文件",
   "pickFromGallery": "从相册选择",
-  "takePhoto": "拍照"
+  "takePhoto": "拍照",
+
+  "preparingServer": "正在准备您的服务器……",
+  "retry": "重试"
 }

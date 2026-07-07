@@ -13,9 +13,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Find nearby devices on the same local network and transfer files fast.';
 
   @override
-  String get getStarted => 'Get Started';
-
-  @override
   String get tabReceive => 'Receive';
 
   @override
@@ -140,4 +137,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get takePhoto => 'Take Photo';
+
+  @override
+  String get preparingServer => 'Preparing your server...';
+
+  @override
+  String get retry => 'Retry';
 }

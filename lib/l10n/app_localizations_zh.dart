@@ -12,9 +12,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appTagline => '查找同一局域网内的附近设备，快速传输文件。';
 
   @override
-  String get getStarted => '开始使用';
-
-  @override
   String get tabReceive => '接收';
 
   @override
@@ -137,4 +134,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get takePhoto => '拍照';
+
+  @override
+  String get preparingServer => '正在准备您的服务器……';
+
+  @override
+  String get retry => '重试';
 }
