@@ -1,0 +1,12 @@
+{
+  "name": "bslend",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "mobile": "npm run start --workspace=apps/mobile",
+    "desktop": "npm run dev --workspace=apps/desktop"
+  }
+}

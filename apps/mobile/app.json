@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "Bslend",
+    "slug": "bslend",
+    "scheme": "bslend",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "com.example.bslend",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSLocalNetworkUsageDescription": "Bslend, yerel ağınızdaki cihazları bulup dosya aktarımı yapabilmek için yerel ağ erişim iznine ihtiyaç duyar.",
+        "NSBonjourServices": [
+          "_bslend._tcp"
+        ],
+        "NSCameraUsageDescription": "Çektiğiniz bir fotoğrafı doğrudan gönderebilmeniz için kameraya erişim iznine ihtiyaç duyar.",
+        "NSPhotoLibraryUsageDescription": "Galerinizden fotoğraf/video seçip gönderebilmeniz için fotoğraf kitaplığı erişim iznine ihtiyaç duyar."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}
