@@ -1,7 +1,9 @@
 import { app, shell, BrowserWindow } from 'electron';
 import { join } from 'path';
+import { randomUUID } from 'crypto';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import { DISCOVERY_UDP_PORT, TRANSFER_HTTP_PORT } from '@bslend/core';
+import { defaultDeviceName } from '@bslend/core';
+import { DiscoveryService } from './discovery';
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -38,10 +40,17 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window);
   });
 
-  // Faz 0: sadece @bslend/core'un dogru cozuldugunu dogrula.
-  console.log(
-    `[Bslend] @bslend/core yuklendi: UDP ${DISCOVERY_UDP_PORT} / HTTP ${TRANSFER_HTTP_PORT}`,
-  );
+  // Faz 1 spike: kalici kimlik henuz yok (Faz 4'te electron-store ile
+  // eklenecek), simdilik her baslangicta yeni bir id/isim uretiliyor -
+  // sadece UDP kesfinin gercekten calistigini dogrulamak icin yeterli.
+  const myId = randomUUID();
+  const myName = defaultDeviceName(myId, 'windows');
+  const discovery = new DiscoveryService(myId, myName, 'windows', (peers) => {
+    console.log('[Discovery] Peer listesi guncellendi:', peers);
+  });
+  discovery.start();
+
+  app.on('before-quit', () => discovery.stop());
 
   createWindow();
 

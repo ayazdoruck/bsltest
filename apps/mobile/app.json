@@ -16,7 +16,8 @@
           "_bslend._tcp"
         ],
         "NSCameraUsageDescription": "Çektiğiniz bir fotoğrafı doğrudan gönderebilmeniz için kameraya erişim iznine ihtiyaç duyar.",
-        "NSPhotoLibraryUsageDescription": "Galerinizden fotoğraf/video seçip gönderebilmeniz için fotoğraf kitaplığı erişim iznine ihtiyaç duyar."
+        "NSPhotoLibraryUsageDescription": "Galerinizden fotoğraf/video seçip gönderebilmeniz için fotoğraf kitaplığı erişim iznine ihtiyaç duyar.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -33,6 +34,11 @@
     },
     "plugins": [
       "expo-asset"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5d356c35-0b48-4216-a4de-73fbc28dd504"
+      }
+    }
   }
 }
